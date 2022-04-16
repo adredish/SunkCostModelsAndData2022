@@ -1,7 +1,6 @@
 %% Figure 1
 % A-C are reprinted from Sweis, Abram, et al 2018.
-cd E:\adr\DATA\KepecsResponse\SunkCostModels-Redish2022
-addpath(pwd)
+addpath(genpath(pwd))
 %% 1D-F
 clear; close all hidden; clc;
 
@@ -13,6 +12,7 @@ FigureLayout; title('');
 popdir;
 myPrint('OriginalMouseData');
 disp('done');
+
 % Science_waitzoneSunkCosts(dataset, 'rat2zone');
 % FigureLayout; title('Rat');
 % 
@@ -131,9 +131,9 @@ myPrintAll('Fig06S');
 
 %% Figure 7
 clear; close all hidden; clc
-SCout = Test_Range(20, 'showMainFigure', false, 'showAttritionBiasFigures', false);
+SCout = Test_Range(20, 'showMainFigure', false, 'showAttritionBiasFigures', false, 'showpEarnXvalueFigures', false);
 save SCout SCout;
-%%
+%
 load SCout
 figure
 [nS,nN,nW] = size(SCout.temperature);  nS = nS*nN;
@@ -163,7 +163,7 @@ Science_waitzoneSunkCosts(dataset, 'rat1zone');
 
 BMS_ShowAccrual;
 popdir;
-%%
+%
 SCout1 = Test_DecisionTimeWZ('decisionTimeWZ_hardset', true);
 Show_DecisionTimeWZTestResult(SCout1);
 
@@ -171,7 +171,9 @@ SCout2 = Test_DecisionTimeWZ('decisionTimeWZ_hardset', false);
 Show_DecisionTimeWZTestResult(SCout2);
 
 myPrintAll('Fig08');
-
+%%
+close all hidden
+disp('Completed');
 %%
 function myPrint(fn)
 disp(fn);
