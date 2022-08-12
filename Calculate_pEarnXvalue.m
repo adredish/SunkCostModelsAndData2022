@@ -1,4 +1,4 @@
-function PEV = CalculateKepecs_pEarnXvalue(R, varargin)
+function PEV = Calculate_pEarnXvalue(R, varargin)
 
 k = R.isStay(:)==1;
 R0.offer = R.offer(k);

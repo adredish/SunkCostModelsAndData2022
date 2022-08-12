@@ -1,8 +1,10 @@
-function Show_pEarnXvalue(PEV)
+function [f1,f2] = Show_pEarnXvalue(PEV)
 
-figure; 
+maxTSQ = max(PEV.TSQ);
+
+f1 = figure; 
 clf;
-[V, TSQ] = ndgrid(PEV.values, 1:30);
+[V, TSQ] = ndgrid(PEV.values, 1:maxTSQ);
 c = pink(30);
 colormap(c);
 scatter(V(:), PEV.pEarnV(:), 10, TSQ(:), 'filled')
@@ -15,8 +17,8 @@ ylabel('p(Earn)');
 ylim([0.5 1]);
 FigureLayout
 
-figure; hold on
-x = -30:30;
+f2 = figure; hold on
+x = PEV.values;
 h = []; L = {};
 y0 = PEV.pEarnV(:,1);
 for iV = 2:15

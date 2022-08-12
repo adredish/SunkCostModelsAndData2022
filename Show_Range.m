@@ -63,7 +63,7 @@ FinishFig();
 colorbar off
 
 % BMS
-pushdir ('BMS');  [bs,sc,gn, Wwz] = BMS0(f0); popdir;
+pushdir ('BMS');  [bs,sc,gn, Wwz] = BMS0(f0, 'mouse'); popdir;
 MakeMesh();
 scatter(bs{1}, sc{1}, 20, Wwz{1}, 'filled', 'Marker', 's');
 scatter(bs{2}, sc{2}, 20, Wwz{2}, 'filled', 'Marker', 'p');
@@ -73,9 +73,10 @@ title('mice [BMS 2018-2022]');
 legend(h, 'early in training', 'late in training');
 FinishFig();
 
+pushdir('BMS'); [bs,sc,gn, Wwz] = BMS0(f0, 'rat'); popdir;
 MakeMesh();
-scatter(bs{3}, sc{3}, 20, Wwz{3}, 'filled', 'Marker', 's');
-scatter(bs{4}, sc{4}, 20, Wwz{4}, 'filled', 'Marker', 'p');
+scatter(bs{1}, sc{1}, 20, Wwz{1}, 'filled', 'Marker', 's');
+scatter(bs{2}, sc{2}, 20, Wwz{2}, 'filled', 'Marker', 'p');
 
 % add PJC-GWD
 pushdir('PJC-GWD');  [bs,sc,W] = PJCGWD0(f0); popdir;
@@ -108,6 +109,6 @@ FinishFig();
         xlim([-0.06 0.01]); ylim([-0.5 1]);
         xticks([-0.05 0]); yticks([0 1]);
         
-        FigureLayout;
+        FigureLayout('layout', [0.33 0.5]);
     end
 end
