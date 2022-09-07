@@ -1,4 +1,4 @@
-function pEarn = CalculateKepecs_pEarn(R)
+function pEarn = Calculate_pEarn(R)
 
 k = R.isStay(:)==1;
 R0.offer = R.offer(k);

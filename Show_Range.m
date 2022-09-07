@@ -66,7 +66,9 @@ colorbar off
 pushdir ('BMS');  [bs,sc,gn, Wwz] = BMS0(f0, 'mouse'); popdir;
 MakeMesh();
 scatter(bs{1}, sc{1}, 20, Wwz{1}, 'filled', 'Marker', 's');
+Compare_SunknessSlopes(bs{1}, sc{1}, gn{1}, Wwz{1}, SCout);
 scatter(bs{2}, sc{2}, 20, Wwz{2}, 'filled', 'Marker', 'p');
+Compare_SunknessSlopes(bs{2}, sc{2}, gn{2}, Wwz{2}, SCout);
 h(1) = plot(nan,nan, 'ks', 'MarkerFaceColor', 'k');
 h(2) = plot(nan,nan, 'kp', 'MarkerFaceColor', 'k');
 title('mice [BMS 2018-2022]');
@@ -76,12 +78,16 @@ FinishFig();
 pushdir('BMS'); [bs,sc,gn, Wwz] = BMS0(f0, 'rat'); popdir;
 MakeMesh();
 scatter(bs{1}, sc{1}, 20, Wwz{1}, 'filled', 'Marker', 's');
+Compare_SunknessSlopes(bs{1}, sc{1}, gn{1}, Wwz{1}, SCout);
 scatter(bs{2}, sc{2}, 20, Wwz{2}, 'filled', 'Marker', 'p');
+Compare_SunknessSlopes(bs{2}, sc{2}, gn{2}, Wwz{2}, SCout);
+
 
 % add PJC-GWD
 pushdir('PJC-GWD');  [bs,sc,W] = PJCGWD0(f0); popdir;
 plot(bs(isnan(W)), sc(isnan(W)), 'ko', 'MarkerSize', 2, 'MarkerFaceColor', 'k');
 scatter(bs, sc, 10, W, 'filled', 'Marker', 'o');  title('Rats with OZ [PJC/GWD 2021]');
+Compare_SunknessSlopes(bs, sc, 'PJCGWD0', W, SCout);
 h(1) = plot(nan,nan, 'ks', 'MarkerFaceColor', 'k');
 h(2) = plot(nan,nan, 'kp', 'MarkerFaceColor', 'k');
 h(3) = plot(nan,nan, 'ko', 'MarkerFaceColor', 'k');

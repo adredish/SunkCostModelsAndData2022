@@ -1,4 +1,4 @@
-function [S,C] = CalculateKepecs_SunkCostMeans(pEarn,R)
+function [S,C] = Calculate_SunkCostMeans(pEarn,R)
 
 maxD = max(R.offer);
 S = nan(maxD,2);

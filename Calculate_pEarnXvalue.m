@@ -30,14 +30,19 @@ for iT = 1:nT
     end
 end
 
+allTrials = allTrials(:);
+V = V(:);
+TS = TS(:);
+
 pEarnV = nan(nV, 30);
+h = waitbar(0);
 for iQ = 1:30
-    fprintf('.');
+    waitbar(iQ/30,h);
     for iV = 1:nV
-        pEarnV(iV,iQ) = nanmean(allTrials(V==values(iV) & TS==iQ));
+        pEarnV(iV,iQ) = mean(allTrials(V==values(iV) & TS==iQ), 'omitnan');
     end    
 end
-fprintf('\n');
+close(h);
 
 PEV.pEarnV = pEarnV;
 PEV.values = values;

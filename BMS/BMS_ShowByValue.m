@@ -1,16 +1,17 @@
 function BMS_ShowByValue(d)
 
-invested2plot = 1:15;
-c = pink(max(invested2plot)*2);
-
 x = -30:30;
+invested2plot = 1:15;
+
+c = BuildColorMap(length(sunkcosts2show));
+
 %%
 figure;
 h0 = plot(x,d.baselineQuitProb, 'ko', 'MarkerFaceColor', 'k');
 hold on
 for iV = 1:length(invested2plot)
     y = d.investedQuits.(sprintf('invested%d',invested2plot(iV)));
-    h(iV) = plot(x,y,'o', 'color', c(iV,:), 'MarkerSize', 5);
+    h(iV) = plot(x,y,'o', 'color', c(iV,:), 'MarkerSize', 5, 'MarkerFaceColor', c(iV,:));
 %     L{iV} = num2str(invested2plot(iV));
 end
 % legend(cat(2, h0, h), cat(2, {'baseline'},L));
