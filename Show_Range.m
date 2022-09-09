@@ -1,59 +1,51 @@
 function Show_Range(SCout, f0)
 
-if nargin == 0
-    pushdir('E:\adr\DATA\KepecsResponse\SunkCostModels-Redish2021');
-    load('SC_RangeTest.mat', 'SC_RangeTest');
-    SCout = SC_RangeTest;
-    popdir;
-end
-
 [nB, nN, nW] = size(SCout.baseSlope);
 
 [~, sN, sW] = ndgrid(1:nB, SCout.sigmaN, SCout.sigmaW);
 
-figure;
-clf; hold on
 xy = nan(nN, nW, 2);
+c = nan(nN, nW, 1);
 for iN = 1:nN
     for iW = 1:nW
         xy(iN,iW,1) = nanmean(SCout.baseSlope(sN(:) == SCout.sigmaN(iN) & sW(:) == SCout.sigmaW(iW)));
         xy(iN,iW,2) = nanmean(SCout.sunkCost(sN(:) == SCout.sigmaN(iN) & sW(:) == SCout.sigmaW(iW)));
+        c(iN,iW) = SCout.sigmaW(iW);
     end
 end
-mesh(xy(:,:,1), xy(:,:,2), zeros(nN, nW), 'EdgeColor', [0 0 0], 'FaceColor', 'none');
 
-%
-c = repmat(jet(nW), [nN, 1]);
-potentialSymbols = '*ospsv^<>h';
-s = repmat(potentialSymbols(1:nN), [nW,1]);
-gscatter(SCout.baseSlope(:), SCout.sunkCost(:), {sN(:),sW(:)},c,s(:));
-xlabel('Slope at 0s');
-ylabel('Sunk Cost Total');
-FigureLayout;
+MakeMesh();
+nP = size(SCout.baseSlope(:),1);
+potentialSymbols = '*ospsv^<>h'; 
+potentialSymbols = potentialSymbols(1:nN);
+colors = nan(nP, 1); symbols = nan(nP,1);
+for iP = 1:nP
+    iW = SCout.sigmaW == SCout.W(iP);
+    iN = SCout.sigmaN == SCout.N(iP);
+    colors(iP) = c(iN,iW);
+    symbols(iP) = potentialSymbols(iN);
+end
+for iN = 1:nN
+    k = SCout.N(:) == SCout.sigmaN(iN);
+    scatter(SCout.baseSlope(k), SCout.sunkCost(k), 25, colors(k), potentialSymbols(iN));
+end
 
 hold on
 h = nan(nN,1);
 for iN = 1:nN
     h(iN) = plot(nan,nan, ['k' potentialSymbols(iN)]);
 end
-labels = arrayfun(@(x)sprintf('\\sigma_N = %d',x), 1:nN, 'uniformoutput', false);
+labels = arrayfun(@(x)sprintf('s_N = %d',x), SCout.sigmaN, 'uniformoutput', false);
 legend(h,labels, 'location','best');
 
-mW = max(SCout.sigmaW);
-C = colorbar;  colormap(jet); caxis([0 mW]);
-C.Limits = [0 mW];
-C.Ticks = sort(unique(SCout.sigmaW));
-ylabel(C, '\sigma_W');
-
-xlim([-0.06 0.01]); ylim([-0.5 1]);
-xticks([-0.05 0]); yticks([0 1]);
 FigureLayout;
 
 
 %%
-clear h c L
+clear h L
+
 % RK
-pushdir('RK');  [bs,sc] = RK0(f0);  popdir;
+[bs,sc] = RK0;  
 MakeMesh();
 h(1) = plot(bs(1), sc(1), 'bo', 'MarkerSize', 10, 'MarkerFaceColor', 'b'); L{1} = 'no-attn-check';
 h(2) = plot(bs(2), sc(2), 'co', 'MarkerSize', 10, 'MarkerFaceColor', 'c'); L{2} = 'with-attn-check';
@@ -63,7 +55,7 @@ FinishFig();
 colorbar off
 
 % BMS
-pushdir ('BMS');  [bs,sc,gn, Wwz] = BMS0(f0, 'mouse'); popdir;
+[bs,sc,gn, Wwz] = BMS0(f0, 'mouse'); 
 MakeMesh();
 scatter(bs{1}, sc{1}, 20, Wwz{1}, 'filled', 'Marker', 's');
 Compare_SunknessSlopes(bs{1}, sc{1}, gn{1}, Wwz{1}, SCout);
@@ -100,21 +92,23 @@ FinishFig();
     function MakeMesh()
         figure
         clf; hold on
-        mesh(xy(:,:,1), xy(:,:,2), zeros(nN, nW), 'EdgeColor', [0.5 0.5 0.5], 'FaceColor', 'none');
-    end
-
-    function FinishFig()
-        caxis([0 20]); colormap jet;
-        C = colorbar;
+        mesh(xy(:,:,1), xy(:,:,2), c, 'LineWidth', 2, 'FaceColor', 'none');
+        shading interp;
         
+        colormap jet
+        caxis([0 20])
+        C = colorbar;
         C.Ticks = [0 20];
-        ylabel(C, 'fit \sigma_W');
+        ylabel(C, 'fit s_W');
 
         xlabel('Slope at 0s');
         ylabel('Sunk Cost Total');
         xlim([-0.06 0.01]); ylim([-0.5 1]);
         xticks([-0.05 0]); yticks([0 1]);
-        
-        FigureLayout('layout', [0.33 0.5]);
+   
+    end
+
+    function FinishFig()      
+        FigureLayout('scaling', 3);
     end
 end

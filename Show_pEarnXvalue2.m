@@ -8,7 +8,7 @@ h = []; L = {};
 y0 = PEV.pEarnV(:,1);
 for iV = 2:15
     y = PEV.pEarnV(:,iV);
-    h(end+1) = plot(x,y-y0, 'o', 'color', colors(iV,:), 'MarkerSize', 8, 'MarkerFaceColor', colors(iV,:));
+    h(end+1) = plot(x,y-y0, 'o', 'color', colors(iV,:), 'MarkerSize', 5, 'MarkerFaceColor', colors(iV,:));
     L{end+1} = sprintf('%d s invested', iV);
 end
 

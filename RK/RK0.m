@@ -1,8 +1,8 @@
-function [baseSlope, sunkCost] = RK0(f0)
+function [baseSlope, sunkCost] = RK0
 % ADD_RK_DATA(fH)
 
 %% ADD RK data to slope / sunkcost plot
-load X
+load('RK/X.mat');
 
 %%
 baseSlope = nan(2,1);

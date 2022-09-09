@@ -1,4 +1,4 @@
-function [H, AB] = Show_AttritionBias(R, varargin)
+function [H, AB, results] = Show_AttritionBias(R, varargin)
 
 [H,AB, results] = Calculate_AttritionBias(R, varargin{:});
 

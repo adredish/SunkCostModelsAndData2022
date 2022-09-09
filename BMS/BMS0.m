@@ -1,7 +1,7 @@
 function [baseSlope, sunkNess, groupName, Wwz, Woz] = BMS0(f0, species)
 
-Z = load('MasterDataSet2');
-Z0 = load('accrualdata');
+Z = load('BMS/MasterDataSet2');
+Z0 = load('BMS/accrualdata');
 
 Z.wzTemp = Z.probitWZTemperature; Z.Wwz = f0(Z.wzTemp);
 Z.ozTemp = Z.probitOZTemperature; Z.Woz = f0(Z.ozTemp);

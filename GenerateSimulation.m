@@ -1,4 +1,4 @@
-function R = GenerateKepecsTest4(varargin)
+function R = GenerateSimulation(varargin)
 
 %fprintf('Generating Kepecs Test...');
 

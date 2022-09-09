@@ -1,20 +1,25 @@
 function Show_DecisionTimeWZTestResult(SCout)
 
 [nB, nD, nT] = size(SCout.sc);
-c = jet(nD);
+colors = BuildColorMap(15,5);
 
 figure;
 title(SCout.T);
 xlabel('Time Spent (s)'); 
-ylabel('SunkCost Sensitivity: \Delta(slope)');
+ylabel('SunkCost Sensitivity: D(slope)');
 hold on
 h = zeros(nD,1);
 for iD = 1:size(SCout.sc,2)        
-    h(iD) = plot(1:nT, squeeze(nanmean(SCout.sc(:,iD,:))), '.-', 'color', c(iD,:));
-    shadederrorbar(1:nT, squeeze(nanmean(SCout.sc(:,iD,:))), ...
-        nanstderr(squeeze(SCout.sc(:,iD,:))), 'color', c(iD,:));
+    if size(SCout.sc,1) == 1
+        h(iD) = plot(1:nT, squeeze(SCout.sc(1,iD,:)), '.-', 'color', colors(iD,:));        
+    elseif size(SCout.sc,1) > 1
+        h(iD) = plot(1:nT, squeeze(nanmean(SCout.sc(:,iD,:))), '.-', 'color', colors(iD,:));
+        shadederrorbar(1:nT, squeeze(nanmean(SCout.sc(:,iD,:))), ...
+            nanstderr(squeeze(SCout.sc(:,iD,:))), 'color', colors(iD,:));
+    end
 end
 legend(h,arrayfun(@(x)sprintf('DT = %d{}s',x),SCout.decisionTimeWZ,'UniformOutput',false), 'location','eastoutside');
+axis([0 30 -0.4 0.4]);
 FigureLayout
 set(gcf,'Units', 'normalized','Position', [0 0 0.5 0.5]);
 
@@ -32,6 +37,5 @@ legend('data','linear fit','quadratic fit');
 xlabel('Decision Time (in the WZ) [s]');
 ylabel('sunk cost sensitivity');
 title(SCout.T);
-ylim([0 0.3]); yticks(0:0.1:0.3);
 FigureLayout;
 

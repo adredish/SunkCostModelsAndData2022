@@ -1,4 +1,4 @@
-function KPShowWanderingNbyOffer(R, varargin)
+function Show_WanderingNbyOffer(R, varargin)
 
 maxN = ceil(nanmax(R.W1(:))/10)*10;
 maxO = max(R.offer);
@@ -21,12 +21,11 @@ tiledlayout(2,3);
 for iPlot = 1:length(offers2show)
     nexttile
     imagescWnan(squeeze(H(offers2show(iPlot),:,:))');
-    text(1, maxN-5, sprintf('# trials entered = %d', nAccepted(offers2show(iPlot))), 'color', 'red', 'FontSize', 18);
+    text(1, maxN, sprintf('# trials entered\n%d', nAccepted(offers2show(iPlot))), 'VerticalAlignment', 'top', 'color', 'red');
     axis xy
     caxis([0 0.05]);
     ylim([0 maxN]+0.5);  % need the +0.5 because of imagesc
     title(sprintf('offer = %d',offers2show(iPlot)));
-    FigureLayout
     xlabel('Time spent (s)');
     ylabel('W_N');
     if iPlot < 4, xlabel(''); xticklabels(''); end
@@ -40,5 +39,6 @@ cb.Layout.Tile = 'east';
 cb.Limits = [0 0.05];
 ylabel(cb, 'Proportion');
 cb.Ticks = [0 0.05];
+cb.FontName = 'Arial';
 
 fH = gcf; fH.WindowState = 'maximized';

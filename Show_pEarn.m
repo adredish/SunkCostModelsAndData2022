@@ -1,4 +1,4 @@
-function Show_pEarn(pEarn, R, varargin)
+function [x,y] = Show_pEarn(pEarn, R, varargin)
 filled = false;
 process_varargin(varargin);
 
@@ -14,15 +14,21 @@ end
 maxTSQ2show = 15;
 
 hold on;
-c = BuildColorMap(maxTSQ2show,5);
+colors = BuildColorMap(maxTSQ2show,5);
 
 %TSQs = [1:5 10:5:(maxD-1)];
 TSQs = 1:maxTSQ2show;
+x = nan(length(TSQs), maxD);
+y = nan(length(TSQs), maxD);
+
 % calculate slopes
 for iTSQ = 1:length(TSQs)
-       h = plot(1:maxD,pEarn(TSQs(iTSQ),:), 'o', 'color', c(TSQs(iTSQ),:));
+    x(iTSQ,:) = 1:maxD;
+    y(iTSQ,:) = pEarn(TSQs(iTSQ),:);
+    
+    h = plot(1:maxD,pEarn(TSQs(iTSQ),:), 'o', 'color', colors(iTSQ,:));
     if filled
-        set(h, 'MarkerFaceColor', c(iTSQ,:));
+        set(h, 'MarkerFaceColor', colors(iTSQ,:));
     end
 end
 legend off
@@ -34,3 +40,5 @@ ylim([0 1]);
 xlim([0 30]);
 legend(arrayfun(@(x) sprintf('%.0fs invested', x), TSQs, 'UniformOutput', false), ...
     'Location', 'eastoutside');
+
+

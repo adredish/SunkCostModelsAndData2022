@@ -16,8 +16,8 @@ for iSubj = 1:nSubj
     W = model.sigmaW(iW);
     [~,iN] = min((model.sunkCost(model.W(:)==W)-sc(iSubj)).^2 + (abs(model.baseSlope(model.W(:)==W) - bs(iSubj))).^2);
     N = model.N(iN);
-    dSC(iSubj) = model.sunkCost(model.W(:)==W & model.N(:)==N) - sc(iSubj);
-    dBS(iSubj) = model.baseSlope(model.W(:)==W & model.N(:)==N) - bs(iSubj);
+    dSC(iSubj) = mean(model.sunkCost(model.W(:)==W & model.N(:)==N) - sc(iSubj));
+    dBS(iSubj) = mean(model.baseSlope(model.W(:)==W & model.N(:)==N) - bs(iSubj));
 end
 
 fprintf('%s: dSC is 0: p=%.5f\n', gn, signrank(dSC));

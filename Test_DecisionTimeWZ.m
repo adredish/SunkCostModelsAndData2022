@@ -3,7 +3,7 @@ function SCout = Test_DecisionTimeWZ(decisionTimeToTest, qTdecayThroughDT, varar
 % KPTest Delayed Start
 % if delay start by Xs, what happens?
 
-SCout.decisionTimeWZ = 0:10;  
+SCout.decisionTimeWZ = 0:9;  
 nBoot = 3;
 process_varargin(varargin);
 
@@ -22,9 +22,9 @@ switch (decisionTimeToTest)
         SCout.Lstr = 'cannot quit for %s s';                
 end
 if qTdecayThroughDT
-    SCout.T = [SCout.T, '; T_{WZ} decays at OZ entry'];
+    SCout.T = [SCout.T, '; T_{WZ} decays at WZ entry (through DZ)'];
 else
-    SCout.T = [SCout.T, '; T_{WZ} decays after DZ'];
+    SCout.T = [SCout.T, '; T_{WZ} decays only after DZ'];
 end
 
 hWait = waitbar(0);
@@ -39,7 +39,15 @@ for iB = 1:nBoot
         pEarn = Calculate_pEarn(R);
         [S,C] = Calculate_SunkCostMeans(pEarn,R);
         SCout.sc(iB, iD, :) = S(:,1) - C(:,1);
-        SCout.scSum(iB, iD) = nanmax(S(:,1) - C(:,1));
+        SCout.scSum(iB, iD) = nansum(S(:,1) - C(:,1));
+        
+        if iB==1
+            Show_SunkCostBubble(pEarn, R);
+            title(sprintf('%d s', iD-1));
+            axis square; xticks([0 30]); yticks([0 1]); 
+            
+            FigureLayout('scaling', 5);
+        end
     end
 end
 

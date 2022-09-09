@@ -6,39 +6,48 @@ outlierLimit = 15;
 
 R = load('accrualdata');
 
-%% plot data
-%figure;
-uG = unique(R.group); nG = length(uG);
-%%
-%%keep only certain cohorts for simplicity
-kcohort = (R.cohort=="plos bio") | (R.cohort=="pnas") | (R.cohort=="yannick & brandy") | (R.cohort=="nick, colin, & sophie");
-%%
-c = [1 0 0 0.1;
-    1 0 1 0.1;
-    0 1 1 0.4;
-    0 0 1 0.25];
-clf; hold on;
-for iG = 1:nG
-    inGroup = R.group==uG(iG) & kcohort;
-    plot(0:28, R.SC(inGroup,:), 'color', c(iG,:))
-    h(iG) = shadederrorbar(0:28, nanmean(R.SC(inGroup,:)), nanstderr(R.SC(inGroup,:)), 'color', c(iG,1:3));
-end
-line(xlim, [0 0], 'color', 'k');
-legend(h, uG, 'location', 'eastoutside');
-xlabel('time already waited');
-ylabel('sunk cost sensitivity');
-ylim([-0.1 0.5]); yticks([-0.1 0 0.5]);
-FigureLayout
+        c = [1 0 0 0.1;
+            1 0 1 0.1;
+            0 1 1 0.4;
+            0 0 1 0.25];
 
+%% plot data
+uG = unique(R.group); nG = length(uG);
+
+%keep only certain cohorts for simplicity
+kcohort = (R.cohort=="plos bio") | (R.cohort=="pnas") | (R.cohort=="yannick & brandy") | (R.cohort=="nick, colin, & sophie");
+%
+ShowSunkCostbyTSQ(kcohort & R.species == "rat");
+ShowSunkCostbyTSQ(kcohort & R.species == "mouse");
+
+    function ShowSunkCostbyTSQ(k)
+        figure;
+        clf; hold on;
+        h = []; L = {};
+        for iG = 1:nG
+            inGroup = R.group==uG(iG) & k;
+            if any(inGroup)
+                plot(0:28, R.SC(inGroup,:), 'color', c(iG,:))
+                h(end+1) = shadederrorbar(0:28, nanmean(R.SC(inGroup,:)), nanstderr(R.SC(inGroup,:)), 'color', c(iG,1:3));
+                L{end+1} = string(uG(iG));
+            end
+        end
+        line(xlim, [0 0], 'color', 'k');
+        legend(h, L, 'location', 'eastoutside');
+        xlabel('time already waited');
+        ylabel('sunk cost sensitivity');
+        ylim([-0.1 0.5]); yticks([-0.1 0 0.5]);
+        FigureLayout
+    end
 
 %% figure
-figure;
-histogram(R.latencyToAccrues(kcohort & (R.species=="mouse")), 'Normalization', 'cdf', 'DisplayStyle', 'stairs')
-hold on
-histogram(R.latencyToAccrues(kcohort & (R.species=="rat")), 'Normalization', 'cdf', 'DisplayStyle', 'stairs')
-legend('mouse', 'rat');
-xlabel('Latency to accrual')
-ylabel('cumulative proportion')
+% figure;
+% histogram(R.latencyToAccrues(kcohort & (R.species=="mouse")), 'Normalization', 'cdf', 'DisplayStyle', 'stairs')
+% hold on
+% histogram(R.latencyToAccrues(kcohort & (R.species=="rat")), 'Normalization', 'cdf', 'DisplayStyle', 'stairs')
+% legend('mouse', 'rat');
+% xlabel('Latency to accrual')
+% ylabel('cumulative proportion')
 
 LT15 = R.latencyToAccrues < outlierLimit;
 fprintf('outlier analysis\n');

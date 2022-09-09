@@ -94,7 +94,6 @@ disp('done');
 clc; close all hidden
 load SCout
 Show_SCoutRelationships(SCout);
-myPrintAll('Fig05b-');
 
 fprintf('AttritionBias ~ SunkCost:\n');
 mdl = fitlm(SCout.attritionBias(:), SCout.sunkCost(:));
@@ -110,6 +109,21 @@ fprintf('SunkCost ~ W + N:\n\t AdjR2 = %f;\n\t F-stat(SC | W)=%f (p=%f);\n\t F-s
 mdl = fitlm([SCout.W(:), SCout.N(:)], SCout.baseSlope(:));
 fprintf('BaseSlope ~ W + N:\n\t AdjR2 = %f;\n\t F-stat(BS | W)=%f (p=%f);\n\t F-stat(BS | N)=%f (p=%f)\n', ...
     mdl.Rsquared.Adjusted, mdl.anova.F(1), mdl.anova.pValue(1), mdl.anova.F(2), mdl.anova.pValue(2));
+
+% calculations we're doing
+R = GenerateSimulation;
+pEarn = Calculate_pEarn(R); 
+figure; Show_pEarn(pEarn,R); 
+[S,C] = Calculate_SunkCostSlopes(pEarn,R);
+plot(0:30, polyval(S(1,:), 0:30), 'k-', 'LineWidth', 3);
+legend off; axis square; FigureLayout; 
+
+Show_SunkCostBubble(pEarn, R);
+
+figure; [H,AB,z] = Show_AttritionBias(R); legend off; axis square; FigureLayout;
+plot(1:30, polyval(z.z, 1:30), 'w', 1:30, polyval(z.z, 1:30), 'r:', 'LineWidth', 3);
+
+myPrintAll('Fig05b-');
 
 disp('done');
 %% Figure 06 Quit Threshold SLOPE
@@ -134,26 +148,26 @@ R = GenerateSimulation('quitThresholdSlope', -1);
 pEarn = Calculate_pEarn(R);
 figure; Show_pEarn(pEarn,R); legend off; title('QT slope = +1'); axis square; FigureLayout;
 figure; Show_AttritionBias(R, 'maxW', 40); title('QT slope = +1'); axis square; FigureLayout;
-%%
+
 myPrintAll('Fig06-');
 disp('done');
 %% Figure 07 Limiting ability to wander away
 close all; clear; clc
 R = GenerateSimulation; 
-figure; pEarn = Calculate_pEarn(R); Show_pEarn(pEarn, R);  title('base'); legend off;  
-figure; Show_WanderingNbyOffer(R, 'maxN', 60); 
+figure; pEarn = Calculate_pEarn(R); Show_pEarn(pEarn, R);  title('base'); legend off;  axis square; FigureLayout; 
+figure; Show_WanderingNbyOffer(R, 'maxN', 60); FigureLayout('layout', [1 1], 'scaling', 1/0.15);
 
 R = GenerateSimulation('quitThresholdSlope', 0);
-figure; pEarn = Calculate_pEarn(R); Show_pEarn(pEarn, R);  title('quitThresholdSlope = 0/s'); legend off;  
-figure; Show_WanderingNbyOffer(R, 'maxN', 60);   
+figure; pEarn = Calculate_pEarn(R); Show_pEarn(pEarn, R);  title('quitThresholdSlope = 0/s'); legend off;  axis square; FigureLayout; 
+figure; Show_WanderingNbyOffer(R, 'maxN', 60);   FigureLayout('layout', [1 1], 'scaling', 1/0.15);
 
 R = GenerateSimulation('maxNdeviation', 0);
-figure; pEarn = Calculate_pEarn(R); Show_pEarn(pEarn, R);  title('\Delta{}W <= 0'); legend off;   
-figure; Show_WanderingNbyOffer(R, 'maxN', 60); 
+figure; pEarn = Calculate_pEarn(R); Show_pEarn(pEarn, R);  title('DW <= 0'); legend off;   axis square; FigureLayout; 
+figure; Show_WanderingNbyOffer(R, 'maxN', 60); FigureLayout('layout', [1 1], 'scaling', 1/0.15);
 
 R = GenerateSimulation('maxNdeviation', 0, 'quitThresholdSlope', 0);
-figure; pEarn = Calculate_pEarn(R); Show_pEarn(pEarn, R);  title('quitThresholdSlope = 0/s & \Delta{}W <= 0'); legend off;  
-figure; Show_WanderingNbyOffer(R, 'maxN', 60);  
+figure; pEarn = Calculate_pEarn(R); Show_pEarn(pEarn, R);  title('quitThresholdSlope = 0/s & DW <= 0'); legend off;  axis square; FigureLayout; 
+figure; Show_WanderingNbyOffer(R, 'maxN', 60);  FigureLayout('layout', [1 1], 'scaling', 1/0.15);
 
 myPrintAll('Fig07-');
 disp('done');
@@ -161,46 +175,48 @@ disp('done');
 
 %%
 
-%% Figure 9
+%% Figure 8
 popdir all
 clear; close all; clc
-
-load SCout
+SC10 = Test_Range(20, 'calcAttritionBias', false, 'calcPEV', false, 'showFigures', false);
+save SC10 SC10
+%%
+clear; close all; clc
+load SC10
 figure
-[nS,nN,nW] = size(SCout.temperature);  nS = nS*nN;
-X = repmat(SCout.sigmaW, nS, 1); X = X(:);
-Y = SCout.temperature; Y = Y(:);
+[nS,nN,nW] = size(SC10.temperature);  nS = nS*nN;
+X = repmat(SC10.sigmaW, nS, 1); X = X(:);
+Y = SC10.temperature; Y = Y(:);
 g0 = fittype('a + b/x');
 [f0,gof1] = fit(Y,X,g0);
 xW = 0:0.01:1;
 plot(Y, X, 'ko', xW, f0(xW), 'r-');
 legend('data',sprintf('fit: %.2f + %.2f/x', f0.a, f0.b));
-xlabel('Tangent of the probit fit at threshold [\tau]');
-ylabel('\sigma_W');
+xlabel('Tangent of the probit fit at threshold [t]');
+ylabel('s_W');
 ylim([0 20]); xlim([0 1]);
 FigureLayout
 
-Show_Range(SCout, f0);
-myPrintAll('Fig09-');
+Show_Range(SC10, f0);
+myPrintAll('Fig08-');
 disp('done');
-%% Figure 10
+%% Figure 9
 clear; close all; clc; 
-
-pushdir('BMS');
-load('dataset.mat', 'dataset');
-
-Science_waitzoneSunkCosts(dataset, 'mousePrimaryEarly1to30');
-Science_waitzoneSunkCosts(dataset, 'rat1zone');
-
-BMS_ShowAccrual;
-popdir;
-
-
-SCout1 = Test_DecisionTimeWZ('decisionTimeWZ_hardset', true);
+% QT decays through decision time
+SCout1 = Test_DecisionTimeWZ('decisionTimeWZ_hardset', true, 'nBoot', 1);
 Show_DecisionTimeWZTestResult(SCout1);
 
-SCout2 = Test_DecisionTimeWZ('decisionTimeWZ_hardset', false);
+% QT decay starts after decision time
+SCout2 = Test_DecisionTimeWZ('decisionTimeWZ_hardset', false, 'nBoot', 1);
 Show_DecisionTimeWZTestResult(SCout2);
+
+myPrintAll('Fig09-');
+%% 
+clear; close all; clc
+load('BMS/dataset.mat', 'dataset');
+Science_waitzoneSunkCosts(dataset, 'mousePrimaryEarly1to30'); title('mice')
+Science_waitzoneSunkCosts(dataset, 'rat1zone'); title('rats')
+BMS_ShowAccrual;
 
 myPrintAll('Fig10-');
 %%
@@ -209,7 +225,7 @@ disp('Completed');
 %%
 function myPrint(fn)
 disp(fn);
-print(sprintf('Figures/%s', fn), '-dsvg');
+print(sprintf('Figures/%s', fn), '-dsvg','-painters');
 print(sprintf('Figures/%s', fn), '-dpng');
 end
 

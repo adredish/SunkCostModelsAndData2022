@@ -25,6 +25,7 @@ end
 
 z = polyfit(x,y,1);
 AB = z(1);
+results.z = z;
 
 results.x = x;
 results.y = y;
