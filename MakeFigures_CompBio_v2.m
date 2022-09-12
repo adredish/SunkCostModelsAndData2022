@@ -30,7 +30,7 @@ load('Huynh/PEV_Huynh');
 
 DSfn = fieldnames(PEVD); nDS = length(DSfn);
 for iDS = 1:nDS
-    [f1,f2] = Show_pEarnXvalue(PEVD.(DSfn{iDS}), 'nBins', 20);
+    [f1,f2] = Show_pEarnXvalue(PEVD.(DSfn{iDS}), 'nBins', 20, 'datasetName', DSfn{iDS});
     figure(f1); axis square; set(gca, 'FontSize', 50); 
     figure(f2); title(DSfn{iDS}); legend off;
     set(f2, 'units', 'normalized','outerposition', [0 0 1 1]); set(gca, 'FontSize', 50);     
@@ -95,19 +95,19 @@ clc; close all hidden
 load SCout
 Show_SCoutRelationships(SCout);
 
-fprintf('AttritionBias ~ SunkCost:\n');
-mdl = fitlm(SCout.attritionBias(:), SCout.sunkCost(:));
+fprintf('SunkCost ~ AttritionBias:\n');
+mdl = fitlm(SCout.attritionBias(:), SCout.sunkCost(:))
 
 mdl = fitlm([SCout.W(:), SCout.N(:)], SCout.attritionBias(:));
-fprintf('AttritionBias ~ W + N:\n\t AdjR2 = %f;\n\t F-stat(AB | W)=%f (p=%f);\n\t F-stat(AB | N)=%f (p=%f)\n', ...
+fprintf('AttritionBias ~ W + N:\n\t AdjR2 = %f;\n\t F-stat(AB | W)=%f (p=%g);\n\t F-stat(AB | N)=%f (p=%g)\n', ...
     mdl.Rsquared.Adjusted, mdl.anova.F(1), mdl.anova.pValue(1), mdl.anova.F(2), mdl.anova.pValue(2));
 
 mdl = fitlm([SCout.W(:), SCout.N(:)], SCout.sunkCost(:));
-fprintf('SunkCost ~ W + N:\n\t AdjR2 = %f;\n\t F-stat(SC | W)=%f (p=%f);\n\t F-stat(SC | N)=%f (p=%f)\n', ...
+fprintf('SunkCost ~ W + N:\n\t AdjR2 = %f;\n\t F-stat(SC | W)=%g (p=%f);\n\t F-stat(SC | N)=%f (p=%g)\n', ...
     mdl.Rsquared.Adjusted, mdl.anova.F(1), mdl.anova.pValue(1), mdl.anova.F(2), mdl.anova.pValue(2));
 
 mdl = fitlm([SCout.W(:), SCout.N(:)], SCout.baseSlope(:));
-fprintf('BaseSlope ~ W + N:\n\t AdjR2 = %f;\n\t F-stat(BS | W)=%f (p=%f);\n\t F-stat(BS | N)=%f (p=%f)\n', ...
+fprintf('BaseSlope ~ W + N:\n\t AdjR2 = %f;\n\t F-stat(BS | W)=%g (p=%f);\n\t F-stat(BS | N)=%f (p=%g)\n', ...
     mdl.Rsquared.Adjusted, mdl.anova.F(1), mdl.anova.pValue(1), mdl.anova.F(2), mdl.anova.pValue(2));
 
 % calculations we're doing
@@ -188,7 +188,7 @@ figure
 X = repmat(SC10.sigmaW, nS, 1); X = X(:);
 Y = SC10.temperature; Y = Y(:);
 g0 = fittype('a + b/x');
-[f0,gof1] = fit(Y,X,g0);
+[f0,gof1] = fit(Y,X,g0)
 xW = 0:0.01:1;
 plot(Y, X, 'ko', xW, f0(xW), 'r-');
 legend('data',sprintf('fit: %.2f + %.2f/x', f0.a, f0.b));
@@ -198,8 +198,34 @@ ylim([0 20]); xlim([0 1]);
 FigureLayout
 
 Show_Range(SC10, f0);
+
+%%
+clf
+R = GenerateSimulation('nOffers', 1e5);
+Hskip = accumarray(R.offer, R.isSkip, [30 1]);
+Hstay = accumarray(R.offer, R.isStay, [30 1]);
+H0 = [Hstay nan(30,2) Hskip]; 
+imagescWnan([0 1], [0 30], H0'); colormap(parula); hold on
+axis xy
+[mu,x,se,sd] = GroupMean(R.isSkip, R.offer, 'nBins', 30);
+plot(x,mu, 'LineWidth', 3, 'color', 'k');
+C = colorbar; ylabel(C, '# offers'); C.Ticks = [];
+set(gca, 'yTick', [0 1], 'yticklabels', {'Stay','Skip'});
+title('Simulation: sW=5, sN=3')
+xlim([0 30]);
+xlabel('offer (s)')
+
+b = glmfit(R.offer, R.isStay, 'binomial','link', 'probit');
+[threshold, temperature] = unpackProbit(b);
+plot(threshold + [-5 5], 0.5 + temperature * [-5 5], 'r:', 'LineWidth', 3)
+line(threshold * [1 1], ylim, 'color', 'k', 'LineWidth', 0.5);
+line(xlim, [0.5 0.5], 'color', 'k', 'LineWidth', 0.5);
+FigureLayout('scaling',8)
+
+%%
 myPrintAll('Fig08-');
 disp('done');
+
 %% Figure 9
 clear; close all; clc; 
 % QT decays through decision time

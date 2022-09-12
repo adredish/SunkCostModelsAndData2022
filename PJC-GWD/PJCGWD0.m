@@ -1,6 +1,9 @@
 function [baseSlope, sunkNess, W] = PJCGWD0(f0)
 
-load('PJC-GWD-SunkCost2.mat', 'SC');
+%load('PJC-GWD-SunkCost2.mat', 'SC');
+load('PJC-GWD/SunkCostByRats', 'SC');
+SC.temperature = SC.wzTemperature;
+SC.threshold = SC.wzThreshold;
 
 [nTSQ, nTRQ, nSess] = size(SC.sunkLines);
 

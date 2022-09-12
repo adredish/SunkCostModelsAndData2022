@@ -35,4 +35,5 @@ function Science_waitzoneSunkCosts(dataset, fN)
     
     FigureLayout('layout', [0.5 0.5]);
 
+    fitlm([d.timeLeft, d.sunkCost], d.earnProb, 'y ~ x1*x2')
 end

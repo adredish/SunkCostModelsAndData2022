@@ -46,9 +46,7 @@ for iO=1:30 %for 1-30s offer range
         probByOffer(iO,iS+1)=sunkList(end-num2subtrFromEnd);
     end
     hold on
-    plot([NaN,diff(probByOffer(iO,:))],'color',(colors(iO,:)))
-    plot([NaN,diff(probByOffer(iO,:))],'o','color',(colors(iO,:)))
-    
+    plot([NaN,diff(probByOffer(iO,:))],'o-','color',(colors(iO,:)))    
 end
 xlim([0 31]) %for 1-30s offer range
 axis square

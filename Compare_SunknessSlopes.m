@@ -20,5 +20,5 @@ for iSubj = 1:nSubj
     dBS(iSubj) = mean(model.baseSlope(model.W(:)==W & model.N(:)==N) - bs(iSubj));
 end
 
-fprintf('%s: dSC is 0: p=%.5f\n', gn, signrank(dSC));
-fprintf('%s: dBS is 0: p=%.5f\n', gn, signrank(dBS));
+fprintf('%s: dSC is 0: n=%.0f, p=%g\n', gn, length(dSC), signrank(dSC));
+fprintf('%s: dBS is 0: n=%.0f, p=%g\n', gn, length(dBS), signrank(dBS));

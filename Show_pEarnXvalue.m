@@ -1,6 +1,9 @@
 function [f1,f2] = Show_pEarnXvalue(PEV, varargin)
+datasetName = '---';
+varargin = process_varargin(varargin);
 
 maxTSQ = max(PEV.TSQ);
+
 colors=BuildColorMap(15);
 
 f1 = figure; hold on
@@ -34,3 +37,8 @@ ylabel('change in p(Earn)');
 
 [slopes] = Calculate_PEV_slopes(PEV, varargin{:});
 errorbar(slopes.x, slopes.mu, slopes.se, 'color', 'k', 'LineWidth',2);
+
+%%
+v = repmat(PEV.values,[1 size(PEV.pEarnV,2)]);
+[p,h,stats] = ranksum(PEV.pEarnV(v(:)<0), PEV.pEarnV(v(:)>0));
+fprintf('%s: p=%g\n', datasetName, p);

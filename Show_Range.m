@@ -1,5 +1,7 @@
 function Show_Range(SCout, f0)
 
+markerSize2plot = 30;
+
 [nB, nN, nW] = size(SCout.baseSlope);
 
 [~, sN, sW] = ndgrid(1:nB, SCout.sigmaN, SCout.sigmaW);
@@ -45,43 +47,42 @@ FigureLayout;
 clear h L
 
 % RK
-[bs,sc] = RK0;  
-MakeMesh();
-h(1) = plot(bs(1), sc(1), 'bo', 'MarkerSize', 10, 'MarkerFaceColor', 'b'); L{1} = 'no-attn-check';
-h(2) = plot(bs(2), sc(2), 'co', 'MarkerSize', 10, 'MarkerFaceColor', 'c'); L{2} = 'with-attn-check';
-legend(h,L);
-title('RK 2020: humans online');
-FinishFig();
-colorbar off
-
+% [bs,sc] = RK0;  
+% MakeMesh();
+% h(1) = plot(bs(1), sc(1), 'bo', 'MarkerSize', 10, 'MarkerFaceColor', 'b'); L{1} = 'no-attn-check';
+% h(2) = plot(bs(2), sc(2), 'co', 'MarkerSize', 10, 'MarkerFaceColor', 'c'); L{2} = 'with-attn-check';
+% legend(h,L);
+% title('RK 2020: humans online');
+% FinishFig();
+% colorbar off
+% 
 % BMS
 [bs,sc,gn, Wwz] = BMS0(f0, 'mouse'); 
 MakeMesh();
-scatter(bs{1}, sc{1}, 20, Wwz{1}, 'filled', 'Marker', 's');
+scatter(bs{1}, sc{1}, markerSize2plot, Wwz{1}, 'filled', 'Marker', 's');
 Compare_SunknessSlopes(bs{1}, sc{1}, gn{1}, Wwz{1}, SCout);
-scatter(bs{2}, sc{2}, 20, Wwz{2}, 'filled', 'Marker', 'p');
+scatter(bs{2}, sc{2}, markerSize2plot, Wwz{2}, 'filled', 'Marker', 'd');
 Compare_SunknessSlopes(bs{2}, sc{2}, gn{2}, Wwz{2}, SCout);
 h(1) = plot(nan,nan, 'ks', 'MarkerFaceColor', 'k');
-h(2) = plot(nan,nan, 'kp', 'MarkerFaceColor', 'k');
+h(2) = plot(nan,nan, 'kd', 'MarkerFaceColor', 'k');
 title('mice [BMS 2018-2022]');
 legend(h, 'early in training', 'late in training');
 FinishFig();
 
-pushdir('BMS'); [bs,sc,gn, Wwz] = BMS0(f0, 'rat'); popdir;
+[bs,sc,gn, Wwz] = BMS0(f0, 'rat'); 
 MakeMesh();
-scatter(bs{1}, sc{1}, 20, Wwz{1}, 'filled', 'Marker', 's');
+scatter(bs{1}, sc{1}, markerSize2plot, Wwz{1}, 'filled', 'Marker', 's');
 Compare_SunknessSlopes(bs{1}, sc{1}, gn{1}, Wwz{1}, SCout);
-scatter(bs{2}, sc{2}, 20, Wwz{2}, 'filled', 'Marker', 'p');
+scatter(bs{2}, sc{2}, markerSize2plot, Wwz{2}, 'filled', 'Marker', 'd');
 Compare_SunknessSlopes(bs{2}, sc{2}, gn{2}, Wwz{2}, SCout);
 
-
 % add PJC-GWD
-pushdir('PJC-GWD');  [bs,sc,W] = PJCGWD0(f0); popdir;
-plot(bs(isnan(W)), sc(isnan(W)), 'ko', 'MarkerSize', 2, 'MarkerFaceColor', 'k');
-scatter(bs, sc, 10, W, 'filled', 'Marker', 'o');  title('Rats with OZ [PJC/GWD 2021]');
+[bs,sc,W] = PJCGWD0(f0); 
+%plot(bs(isnan(W)), sc(isnan(W)), 'ko', 'MarkerSize', 2, 'MarkerFaceColor', 'k');
+scatter(bs, sc, markerSize2plot, W, 'filled', 'Marker', 'o');  title('Rats with OZ [PJC/GWD 2021]');
 Compare_SunknessSlopes(bs, sc, 'PJCGWD0', W, SCout);
 h(1) = plot(nan,nan, 'ks', 'MarkerFaceColor', 'k');
-h(2) = plot(nan,nan, 'kp', 'MarkerFaceColor', 'k');
+h(2) = plot(nan,nan, 'kd', 'MarkerFaceColor', 'k');
 h(3) = plot(nan,nan, 'ko', 'MarkerFaceColor', 'k');
 title('rats [Redish Lab 2016-2018]');
 legend(h, 'BJS/YAB: WZ only', '2018 data: OZ rats', 'PJC/GWD');
