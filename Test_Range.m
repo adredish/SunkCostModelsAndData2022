@@ -4,8 +4,8 @@ calcAttritionBias = true;
 calcPEV = true;
 showFigures = true;
 
-sigmaN = [5 3 2 0];
-sigmaW = [20 10 8 5 3 1 0.5 0.25 0];
+sigmaN = [0 2 3 5];
+sigmaW = [0 0.25 0.5 1 3 5 8 10 20];
 process_varargin(varargin);
 
 SCout.sigmaN = sigmaN; nN = length(SCout.sigmaN);

@@ -10,9 +10,9 @@ ShowOneFigure('baseSlope', 2);
 
     function ShowOneFigure(d, nSig)
         figure; colormap(jet)
-        scatter(sq(5-SCout.N(:)), sq(SCout.W(:)), 75, sq(SCout.(d)(:)), 's', 'filled')
+        scatter(sq(SCout.N(:)), sq(SCout.W(:)), 75, sq(SCout.(d)(:)), 's', 'filled')
         axis([-0.25 5.25 -0.5 21]);
-        xticks(sort(SCout.sigmaN)); xticklabels({5 3 2 0});
+        xticks(sort(SCout.sigmaN)); 
         yticks(sort(SCout.sigmaW)); set(gca, 'yscale', 'log');
         
         cx = caxis; cx = round(cx*10^nSig)/10^nSig; caxis(cx);
